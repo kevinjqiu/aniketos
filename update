@@ -1,0 +1,142 @@
+#! /home/fresh/evolve-env/bin/python
+import sys
+import os
+import commands
+import re
+import json
+import cStringIO
+import shutil
+import cPickle
+
+from pylint.reporters import BaseReporter
+from pylint.interfaces import IReporter
+from pylint.lint import Run
+from collections import defaultdict
+from functools import partial
+
+refname, oldrev, newrev = sys.argv[1:]
+
+STAGING_DIR = os.path.abspath('.staging')
+REMOTE_PYLINTRC = "http://git.2ndsiteinc.com/w/evolve.git/blob_plain/HEAD:/.pylintrc"
+LOCAL_PYLINTRC = os.path.join(STAGING_DIR, '.pylintrc')
+PREVIOUS = '.previous.pickle'
+
+class JsonReporter(BaseReporter):
+
+    __implements__ = IReporter
+
+    def __init__(self, root, output=sys.stdout):
+        BaseReporter.__init__(self, output)
+        # messages is in the following format:
+        # filepath : { msgid : [ (lineno, msg) ] }
+        self.root = root
+        self.messages = defaultdict(lambda : defaultdict(list))
+
+    def add_message(self, msg_id, location, msg):
+        path, module, obj, line, col_offset = location
+
+        relpath = path[len(self.root):]
+        self.messages[relpath][msg_id].append(
+            (line, msg)
+        )
+
+    def display_results(self, layout):
+        self.writeln(json.dumps(self.messages))
+
+if refname == 'refs/heads/master':
+
+    if os.path.exists(STAGING_DIR):
+        shutil.rmtree(STAGING_DIR)
+    os.mkdir(STAGING_DIR)
+
+    if os.path.exists(PREVIOUS):
+        with open(PREVIOUS) as f:
+            previous = cPickle.load(f)
+    else:
+        previous = None
+
+    os.system('curl -so %s %s' % (LOCAL_PYLINTRC, REMOTE_PYLINTRC))
+
+    output = commands.getoutput('git ls-tree -r ' + newrev)
+    objects = output.splitlines()
+
+    violated_files = []
+    
+    objects_to_check = [ (mask, type_, sha, filepath)
+       for (mask, type_, sha, filepath) in map(partial(re.split, r'\s+'), objects)
+       if type_ == 'blob' and filepath.endswith('.py')
+    ]
+
+    abs_paths = []
+    for object_ in objects_to_check:
+        mask, type_, sha, filepath = object_
+        abs_filepath = os.path.join(STAGING_DIR, filepath)
+        dirname = os.path.dirname(abs_filepath)
+        if not os.path.exists(dirname):
+            os.makedirs(dirname)
+        os.system('git cat-file blob %s > %s' % (sha, abs_filepath))
+        abs_paths.append(abs_filepath)
+
+    output = cStringIO.StringIO()
+    reporter = JsonReporter(STAGING_DIR, output=output)
+    Run(['--rcfile=%s' % LOCAL_PYLINTRC] + list(abs_paths),
+        reporter=reporter,
+        exit=False)
+    del output
+
+    current = reporter.messages
+
+    if previous is None:
+        print "No previous run data to compare."
+        with open(PREVIOUS, 'w') as f:
+            cPickle.dump(dict(current), f)
+        print "The current run is stored."
+        exit(1)
+    else:
+        for filepath in previous:
+            if filepath in current:
+                print "Checking %s..." % filepath
+                previous_violations = len(previous[filepath])
+                current_violations = len(current[filepath])
+                print "previous: %d, current: %d" % (previous_violations, current_violations)
+                if previous_violations < current_violations:
+                    violated_files.append(filepath)
+
+    if violated_files:
+        for violated_file in violated_files:
+            violations = current[violated_file]
+            print "=" * len(violated_file)
+            print violated_file
+            print "=" * len(violated_file)
+
+            for msgid, locations in violations.iteritems():
+                print "  %s:" % msgid
+                for location in locations:
+                    print "    %s : %s" % location
+
+        print "#######################################################"
+        print "## Your commit introduced some coding style violations."
+        print "## Please fix the violations and push again.           "
+        print "## If you're sure that the commit is ok,               "
+        print "## run `git push -f` to force push                     "
+        print "#######################################################"
+
+        exit(1)
+    else:
+        with open(PREVIOUS, 'w') as f:
+            cPickle.dump(dict(current), f)
+        exit(0)
+else:
+    # Always allow pushing to non-master branches
+    sys.exit(0)
+
+            # if reporter.messages:
+            #     header = "There are violations in: %s" % filepath
+            #     print "=" * len(header)
+            #     print header
+            #     print "=" * len(header)
+            #     for path, violations in reporter.messages.iteritems():
+            #         for msgid, locations in violations.iteritems():
+            #             print msgid
+            #             for (lineno, msg) in locations:
+            #                 print "  %s: %s" % (lineno, msg) 
