@@ -39,8 +39,5 @@ def update(refname, oldrev, newrev):
         # skipping...
         sys.exit(0)
 
-    # TODO: correct exit status
-    sys.exit(1)
-
 def main():
     update(*sys.argv[1:])
