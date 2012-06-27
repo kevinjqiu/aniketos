@@ -10,9 +10,7 @@ from pylint.interfaces import IReporter
 from pylint.lint import Run
 
 # Reporter {{{ 2
-# TODO: Not really a reporter. It's only usage is to collect
-# violations. Rename this.
-class JsonReporter(BaseReporter):
+class MessageCollector(BaseReporter):
 
     __implements__ = IReporter
 
@@ -32,7 +30,8 @@ class JsonReporter(BaseReporter):
         )
 
     def display_results(self, layout):
-        self.writeln(json.dumps(self.messages))
+        # We're only collecting messages
+        pass
 # }}}
 
 class PylintChecker(object):
@@ -84,10 +83,7 @@ class PylintChecker(object):
 
     def _run_pylint(self, abs_paths):
         # TODO: a better idiom for 'throwing away output'?
-        import cStringIO
-        output = cStringIO.StringIO()
-        reporter = JsonReporter(self.staging_dir, output=output)
-        del output
+        reporter = MessageCollector(self.staging_dir)
 
         if self.rcfile:
             args = ['--rcfile %s' % self.rcfile]
