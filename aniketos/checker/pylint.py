@@ -27,4 +27,17 @@ class JsonReporter(BaseReporter):
 # }}}
 
 class PylintChecker(object):
-    pass
+
+    def __init__(self, git):
+        self.git = git
+
+    def __call__(self, refname, oldrev, newrev):
+        files = self.git.changed_files(oldrev, newrev)
+        tree = self.git.ls_tree(newrev)
+
+        changed_file_details = \
+            [(file_, _) for (file_, _) in tree.iteritems() if file_ in files]
+
+        print changed_file_details
+
+# vim: set fdm=marker foldlevel=1:

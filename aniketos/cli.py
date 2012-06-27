@@ -1,8 +1,11 @@
 import git
 import sys
+from aniketos.checker.pylint import PylintChecker
 from sys import exit
 
-WATCHED_REF = 'refs/heads/master'
+CHECKERS = {
+    'refs/heads/master' : [PylintChecker(git)]
+}
 
 def update(refname, oldrev, newrev):
     """Git update hook.
@@ -13,14 +16,14 @@ def update(refname, oldrev, newrev):
         :param newrev: The new object name to be stored in the ref
     """
 
-    if refname == WATCHED_REF:
-        files = git.changed_files(oldrev, newrev)
-        tree = git.ls_tree(newrev)
-
-        changed_file_details = \
-            [(file_, _) for (file_, _) in tree.iteritems() if file_ in files]
-        print changed_file_details
-
+    if refname in CHECKERS:
+        checkers = CHECKERS[refname]
+        for checker in checkers:
+            checker(refname, oldrev, newrev)
+    else:
+        # No checker found for refname
+        # skipping...
+        sys.exit(0)
 
     # TODO: correct exit status
     exit(1)
