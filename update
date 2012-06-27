@@ -61,7 +61,7 @@ if refname == 'refs/heads/master':
     objects = output.splitlines()
 
     violated_files = []
-    
+
     objects_to_check = [ (mask, type_, sha, filepath)
        for (mask, type_, sha, filepath) in map(partial(re.split, r'\s+'), objects)
        if type_ == 'blob' and filepath.endswith('.py')

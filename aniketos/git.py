@@ -22,3 +22,6 @@ def changed_files(oldrev, newrev):
     """
     output = commands.getoutput('git diff --name-only %s %s' % (oldrev, newrev))
     return output.splitlines()
+
+def get_blob(hash_):
+    return commands.getoutput('git cat-file blob %s' % hash_)

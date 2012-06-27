@@ -1,10 +1,14 @@
 import git
 import sys
+from os.path import join
+from os.path import abspath
 from aniketos.checker.pylint import PylintChecker
-from sys import exit
+
+STAGING_DIR = '/tmp/staging'
+PREVIOUS_RESULT_FILE = '/tmp/previous.db'
 
 CHECKERS = {
-    'refs/heads/master' : [PylintChecker(git)]
+    'refs/heads/master' : [PylintChecker(git, STAGING_DIR, PREVIOUS_RESULT_FILE)]
 }
 
 def update(refname, oldrev, newrev):
@@ -26,7 +30,7 @@ def update(refname, oldrev, newrev):
         sys.exit(0)
 
     # TODO: correct exit status
-    exit(1)
+    sys.exit(1)
 
 def main():
     update(*sys.argv[1:])
