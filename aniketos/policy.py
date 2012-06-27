@@ -31,7 +31,7 @@ class PreviousRunBasedPolicy(object):
     key in the previous result increases, the push will be rejected.
     """
     def __init__(self, result_filepath):
-        self.result_filepath
+        self.result_filepath = result_filepath
 
     def _load_result(self):
         if os.path.exists(self.result_filepath):
@@ -58,7 +58,7 @@ class PreviousRunBasedPolicy(object):
 
             files_with_more_violations = []
             for file_ in files_to_check:
-                if _sum_violations(result[file_] > _sum_violations(previous_result[file_]):
+                if _sum_violations(result[file_]) > _sum_violations(previous_result[file_]):
                     files_with_more_violations.append(
                         (file_, result[file_])
                     )

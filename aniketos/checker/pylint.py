@@ -80,6 +80,7 @@ class PylintChecker(object):
             abs_paths.append(abs_path)
 
         result = self._run_pylint(abs_paths)
+        print result
         return self.accept_policy(result)
 
     def _run_pylint(self, abs_paths):
@@ -100,18 +101,5 @@ class PylintChecker(object):
             exit=False)
 
         return reporter.messages
-
-    def accept_or_reject(self, result):
-        if os.path.exists(self.previous_result_file):
-            with open(self.previous_result_file) as f:
-                previous_result = cPickle.load(f)
-            if previous_result:
-                pass
-            else:
-                pass
-        else:
-            with open(self.previous_result_file, 'w') as f:
-                cPickle.dump(dict(result), f)
-            return True
 
 # vim: set fdm=marker foldlevel=1:

@@ -4,6 +4,7 @@ from os.path import join
 from os.path import abspath
 from aniketos.checker.pylint import PylintChecker
 from aniketos.policy import StrictAcceptPolicy
+from aniketos.policy import PreviousRunBasedPolicy
 
 STAGING_DIR = '/tmp/staging'
 RESULT_FILE = '/tmp/result.pickle'
