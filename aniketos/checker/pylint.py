@@ -80,7 +80,6 @@ class PylintChecker(object):
             abs_paths.append(abs_path)
 
         result = self._run_pylint(abs_paths)
-        print result
         return self.accept_policy(result)
 
     def _run_pylint(self, abs_paths):

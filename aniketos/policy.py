@@ -20,6 +20,12 @@ def _sum_violations(msgid_occurence_map):
         msgid_occurence_map.iteritems(),
         0)
 
+def _printable_violations(violations):
+    for msgid, occurences in violations.iteritems():
+        print " "*4, msgid
+        for lineno, msg in occurences:
+            print " "*4, "| line ", lineno, msg
+
 class PreviousRunBasedPolicy(object):
     """This policy is based on previous results.
 
@@ -58,12 +64,22 @@ class PreviousRunBasedPolicy(object):
 
             files_with_more_violations = []
             for file_ in files_to_check:
-                if _sum_violations(result[file_]) > _sum_violations(previous_result[file_]):
+                num_previous_violations = _sum_violations(previous_result[file_])
+                num_current_violations = _sum_violations(result[file_])
+                if num_current_violations > num_previous_violations:
                     files_with_more_violations.append(
-                        (file_, result[file_])
+                        (file_,
+                            (num_previous_violations, num_current_violations),
+                            result[file_])
                     )
 
             if files_with_more_violations:
+                print "The push introduced more violations on the following files:"
+                for file_, (num_previous_violations, num_current_violations), violations in files_with_more_violations:
+                    print " "*2, file_, \
+                        "previous: %d" % num_previous_violations, \
+                        "current: %d" % num_current_violations
+                    _printable_violations(violations)
                 return False
             else:
                 previous_result.update(result)
