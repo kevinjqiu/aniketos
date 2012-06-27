@@ -45,8 +45,9 @@ class PylintChecker(object):
         if os.path.exists(dir_):
             shutil.rmtree(dir_)
 
-    def _create_dir(self, dir_):
-        os.makedirs(dir_)
+    def _create_dir_if_necessary(self, dir_):
+        if not os.path.exists(dir_):
+            os.makedirs(dir_)
 
     def __call__(self, refname, oldrev, newrev):
         files = self.git.changed_files(oldrev, newrev)
@@ -56,13 +57,13 @@ class PylintChecker(object):
             [(file_, _) for (file_, _) in tree.iteritems() if file_ in files]
 
         self._nuke_dir_if_necessary(self.staging_dir)
-        self._create_dir(self.staging_dir)
-        # for each changed files, check out a local copy
+        self._create_dir_if_necessary(self.staging_dir)
 
+        # for each changed files, check out a local copy
         abs_paths = []
         for file_, details in changed_file_details:
             abs_path = os.path.join(self.staging_dir, file_)
-            self._create_dir(os.path.dirname(abs_path))
+            self._create_dir_if_necessary(os.path.dirname(abs_path))
             with open(abs_path, 'w') as f:
                 f.write(self.git.get_blob(details['hash']))
             abs_paths.append(abs_path)
