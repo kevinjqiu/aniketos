@@ -20,12 +20,6 @@ def _sum_violations(msgid_occurence_map):
         msgid_occurence_map.iteritems(),
         0)
 
-def _printable_violations(violations):
-    for msgid, occurences in violations.iteritems():
-        print " "*4, msgid
-        for lineno, msg in occurences:
-            print " "*4, "| line ", lineno, msg
-
 class PreviousRunBasedPolicy(object):
     """This policy is based on previous results.
 
@@ -79,7 +73,8 @@ class PreviousRunBasedPolicy(object):
                     print " "*2, file_, \
                         "previous: %d" % num_previous_violations, \
                         "current: %d" % num_current_violations
-                    _printable_violations(violations)
+                    from violation import Violations
+                    print str(Violations(violations))
                 return False
             else:
                 previous_result.update(result)
