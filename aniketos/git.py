@@ -1,3 +1,4 @@
+"""A wrapper module for the git command"""
 import commands
 import re
 from functools import partial

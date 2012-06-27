@@ -3,12 +3,13 @@ import sys
 from os.path import join
 from os.path import abspath
 from aniketos.checker.pylint import PylintChecker
+from aniketos.policy import StrictAcceptPolicy
 
 STAGING_DIR = '/tmp/staging'
 PREVIOUS_RESULT_FILE = '/tmp/previous.db'
 
 CHECKERS = {
-    'refs/heads/master' : [PylintChecker(git, STAGING_DIR, PREVIOUS_RESULT_FILE)]
+    'refs/heads/master' : [PylintChecker(git, STAGING_DIR, accept_policy=StrictAcceptPolicy)]
 }
 
 def update(refname, oldrev, newrev):

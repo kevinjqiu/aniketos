@@ -10,6 +10,8 @@ from pylint.interfaces import IReporter
 from pylint.lint import Run
 
 # Reporter {{{ 2
+# TODO: Not really a reporter. It's only usage is to collect
+# violations. Rename this.
 class JsonReporter(BaseReporter):
 
     __implements__ = IReporter
@@ -35,11 +37,13 @@ class JsonReporter(BaseReporter):
 
 class PylintChecker(object):
 
-    def __init__(self, git, staging_dir, previous_result_file, rcfile=None):
+    name = 'PYLINT'
+
+    def __init__(self, git, staging_dir, rcfile=None, accept_policy=lambda *a : True):
         self.git = git
         self.staging_dir = staging_dir
-        self.previous_result_file = previous_result_file
         self.rcfile = rcfile
+        self.accept_policy = accept_policy
 
     def _nuke_dir_if_necessary(self, dir_):
         if os.path.exists(dir_):
@@ -50,6 +54,13 @@ class PylintChecker(object):
             os.makedirs(dir_)
 
     def __call__(self, refname, oldrev, newrev):
+        """Run Pylint on candidate files, return a list of violations.
+
+            :param refname: refname
+            :param oldrev: old revision hash
+            :param newrev: new revision hash
+            :return: list of violations from files touched between oldrev...newrev
+        """
         files = self.git.changed_files(oldrev, newrev)
         tree = self.git.ls_tree(newrev)
 
@@ -69,7 +80,7 @@ class PylintChecker(object):
             abs_paths.append(abs_path)
 
         result = self._run_pylint(abs_paths)
-        print result
+        return self.accept_policy(result)
 
     def _run_pylint(self, abs_paths):
         # TODO: a better idiom for 'throwing away output'?
@@ -89,5 +100,18 @@ class PylintChecker(object):
             exit=False)
 
         return reporter.messages
+
+    def accept_or_reject(self, result):
+        if os.path.exists(self.previous_result_file):
+            with open(self.previous_result_file) as f:
+                previous_result = cPickle.load(f)
+            if previous_result:
+                pass
+            else:
+                pass
+        else:
+            with open(self.previous_result_file, 'w') as f:
+                cPickle.dump(dict(result), f)
+            return True
 
 # vim: set fdm=marker foldlevel=1:
