@@ -4,6 +4,7 @@ import shutil
 import sys
 import os
 import json
+from aniketos.policy import DefaultAcceptPolicy
 from collections import defaultdict
 from pylint.reporters import BaseReporter
 from pylint.interfaces import IReporter
@@ -38,7 +39,7 @@ class PylintChecker(object):
 
     name = 'PYLINT'
 
-    def __init__(self, git, staging_dir, rcfile=None, accept_policy=lambda *a : True):
+    def __init__(self, git, staging_dir, rcfile=None, accept_policy=DefaultAcceptPolicy):
         self.git = git
         self.staging_dir = staging_dir
         self.rcfile = rcfile
