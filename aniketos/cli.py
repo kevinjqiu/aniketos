@@ -6,10 +6,11 @@ from aniketos.checker.pylint import PylintChecker
 from aniketos.policy import StrictAcceptPolicy
 
 STAGING_DIR = '/tmp/staging'
-PREVIOUS_RESULT_FILE = '/tmp/previous.db'
+RESULT_FILE = '/tmp/result.pickle'
 
 CHECKERS = {
-    'refs/heads/master' : [PylintChecker(git, STAGING_DIR, accept_policy=StrictAcceptPolicy)]
+    'refs/heads/master' : [PylintChecker(git, STAGING_DIR,
+        accept_policy=PreviousRunBasedPolicy(RESULT_FILE))]
 }
 
 def update(refname, oldrev, newrev):
@@ -22,8 +23,16 @@ def update(refname, oldrev, newrev):
 
     if refname in CHECKERS:
         checkers = CHECKERS[refname]
+        accepted = True
         for checker in checkers:
-            checker(refname, oldrev, newrev)
+            accepted = accepted and checker(refname, oldrev, newrev)
+
+        # We still run all the checkers,
+        # so the user will know which checks failed
+        if accepted:
+            sys.exit(0)
+        else:
+            sys.exit(1)
     else:
         # No checker found for refname
         # skipping...
