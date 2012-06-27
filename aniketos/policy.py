@@ -5,7 +5,9 @@ checker.
 
 def StrictAcceptPolicy(result):
     """This is the strictest accept policy.
-    If there are any violations at all in :param result:,
-    the method returns `False`
+
+    If there are any violations at all in :param result:, the method returns
+    `False`, which means 'reject'
     """
     return len(result) == 0
+
