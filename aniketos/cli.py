@@ -18,7 +18,7 @@ def update(refname, oldrev, newrev):
         tree = git.ls_tree(newrev)
 
         changed_file_details = \
-                [(file_, _) for (file_, _) in tree.iteritems() if file_ in files]
+            [(file_, _) for (file_, _) in tree.iteritems() if file_ in files]
         print changed_file_details
 
 

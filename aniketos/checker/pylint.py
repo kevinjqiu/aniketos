@@ -2,6 +2,7 @@ from pylint.reporters import BaseReporter
 from pylint.interfaces import IReporter
 from pylint.lint import Run
 
+# Reporter {{{ 2
 class JsonReporter(BaseReporter):
 
     __implements__ = IReporter
@@ -23,3 +24,7 @@ class JsonReporter(BaseReporter):
 
     def display_results(self, layout):
         self.writeln(json.dumps(self.messages))
+# }}}
+
+class PylintChecker(object):
+    pass
