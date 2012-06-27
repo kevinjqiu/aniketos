@@ -1,3 +1,6 @@
+from __future__ import absolute_import
+
+import sys
 from pylint.reporters import BaseReporter
 from pylint.interfaces import IReporter
 from pylint.lint import Run
