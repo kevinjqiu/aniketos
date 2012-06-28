@@ -15,3 +15,14 @@ How it works
 
 [Git](http://git-scm.com/) has this mechanism called 'hooks' which allows scripts to be executed when certain events happen to your repository. Aniketos can be used as the server `update` hook, which gets called before the server `ref` is updated.
 
+Installation
+------------
+
+TODO
+
+Configure
+---------
+
+TODO
+
+
