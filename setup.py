@@ -20,8 +20,8 @@ setup(name='aniketos',
       install_requires=open('requirements.txt').readlines(),
       entry_points={
           'console_scripts':[
-              'update=aniketos.cli:update',
-              'install-hook=aniketos.cli:install'
+              'update=aniketos.cli.update:main',
+              'install-hook=aniketos.cli.install:main'
               ]
           }
       )

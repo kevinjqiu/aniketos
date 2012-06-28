@@ -1,7 +1,7 @@
-import git
 import sys
 from os.path import join
 from os.path import abspath
+from aniketos import git
 from aniketos.checker.pylint import PylintChecker
 from aniketos.policy import StrictAcceptPolicy
 from aniketos.policy import PreviousRunBasedPolicy
@@ -11,10 +11,10 @@ RESULT_FILE = '/tmp/result.pickle'
 
 CHECKERS = {
     'refs/heads/master' : [PylintChecker(git, STAGING_DIR,
-        accept_policy=PreviousRunBasedPolicy(RESULT_FILE))]
+        PreviousRunBasedPolicy(RESULT_FILE))]
 }
 
-def update():
+def main():
     """Git update hook.
 
     :param refname: Name of the ref, e.g., refs/heads/master
@@ -39,6 +39,3 @@ def update():
         # No checker found for refname
         # skipping...
         sys.exit(0)
-
-def install():
-    pass
