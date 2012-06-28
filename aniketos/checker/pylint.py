@@ -39,7 +39,7 @@ class PylintChecker(object):
 
     name = 'PYLINT'
 
-    def __init__(self, git, staging_dir, rcfile=None, accept_policy=DefaultAcceptPolicy):
+    def __init__(self, git, staging_dir, rcfile=None, accept_policy):
         self.git = git
         self.staging_dir = staging_dir
         self.rcfile = rcfile

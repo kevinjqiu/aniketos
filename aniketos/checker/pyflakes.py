@@ -6,7 +6,7 @@ class PyflakesChecker(object):
 
     name = 'PYFLAKES'
 
-    def __init__(self, git, staging_dir, accept_policy=DefaultAcceptPolicy):
+    def __init__(self, git, staging_dir, accept_policy):
         self.git = git
         self.staging_dir = staging_dir
         self.accept_policy = accept_policy
