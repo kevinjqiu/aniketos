@@ -14,13 +14,14 @@ setup(name='aniketos',
       author_email='kevin.jing.qiu@gmail.com',
       url='',
       license='',
-      packages=find_packages(exclude=['ez_setup', 'examples', 'tests']),
+      packages=find_packages(exclude=['ez_setup', 'examples', 'test']),
       include_package_data=True,
       zip_safe=False,
       install_requires=open('requirements.txt').readlines(),
       entry_points={
           'console_scripts':[
-              'update=aniketos.cli:main'
+              'update=aniketos.cli:update',
+              'install-hook=aniketos.cli:install'
               ]
           }
       )

@@ -14,13 +14,14 @@ CHECKERS = {
         accept_policy=PreviousRunBasedPolicy(RESULT_FILE))]
 }
 
-def update(refname, oldrev, newrev):
+def update():
     """Git update hook.
 
     :param refname: Name of the ref, e.g., refs/heads/master
     :param oldrev: The old object name stored in the ref
     :param newrev: The new object name to be stored in the ref
     """
+    refname, oldrev, newrev = sys.argv[1:]
 
     if refname in CHECKERS:
         checkers = CHECKERS[refname]
@@ -39,5 +40,5 @@ def update(refname, oldrev, newrev):
         # skipping...
         sys.exit(0)
 
-def main():
-    update(*sys.argv[1:])
+def install():
+    pass
