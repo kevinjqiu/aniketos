@@ -1,7 +1,7 @@
 Aniketos
 ========
 
-[Aniketos](http://www.theoi.com/Ouranios/AniketosAlexiares.html) is one of two gatekeepers of Olympos. It also keeps your git repository from pushes that don't fit your project standards.
+[Aniketos](http://www.theoi.com/Ouranios/AniketosAlexiares.html) is one of two gatekeepers of [Mount Olympus](http://en.wikipedia.org/wiki/Mount_Olympus). It also keeps your git repository from pushes that don't fit your project standards.
 
 Why
 ---
