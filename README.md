@@ -18,7 +18,25 @@ How it works
 Installation
 ------------
 
-TODO
+* If you're using [pip](http://www.pip-installer.org/)
+
+```
+pip install aniketos
+```
+
+* or with [EasyInstall](http://packages.python.org/distribute/easy_install.html)
+
+```
+easy_install aniketos
+```
+
+After `aniketos` is installed, invoke:
+
+```
+install-hook <repository-location>
+```
+
+You need write permission to `repository-location`. This will install aniketos to `<repository-location>/hooks/update`
 
 Configure
 ---------
