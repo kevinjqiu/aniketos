@@ -1,16 +1,17 @@
 from __future__ import absolute_import
 
+import git
 import shutil
 import sys
 import os
 import json
-from aniketos.policy import DefaultAcceptPolicy
 from collections import defaultdict
 from pylint.reporters import BaseReporter
 from pylint.interfaces import IReporter
 from pylint.lint import Run
 
-# Reporter {{{ 2
+# Pylint checker {{{2
+# Reporter {{{ 3
 class MessageCollector(BaseReporter):
 
     __implements__ = IReporter
@@ -37,10 +38,7 @@ class MessageCollector(BaseReporter):
 
 class PylintChecker(object):
 
-    name = 'PYLINT'
-
-    def __init__(self, git, staging_dir, accept_policy, rcfile=None):
-        self.git = git
+    def __init__(self, staging_dir, accept_policy, rcfile=None):
         self.staging_dir = staging_dir
         self.rcfile = rcfile
         self.accept_policy = accept_policy
@@ -61,8 +59,8 @@ class PylintChecker(object):
             :param newrev: new revision hash
             :return: list of violations from files touched between oldrev...newrev
         """
-        files = self.git.changed_files(oldrev, newrev)
-        tree = self.git.ls_tree(newrev)
+        files = git.changed_files(oldrev, newrev)
+        tree = git.ls_tree(newrev)
 
         changed_file_details = \
             [(file_, _) for (file_, _) in tree.iteritems() if file_ in files]
@@ -76,7 +74,7 @@ class PylintChecker(object):
             abs_path = os.path.join(self.staging_dir, file_)
             self._create_dir_if_necessary(os.path.dirname(abs_path))
             with open(abs_path, 'w') as f:
-                f.write(self.git.get_blob(details['hash']))
+                f.write(git.get_blob(details['hash']))
             abs_paths.append(abs_path)
 
         result = self._run_pylint(abs_paths)
@@ -97,5 +95,12 @@ class PylintChecker(object):
             exit=False)
 
         return reporter.messages
+# }}}
+
+CHECKER_CLASS = {}
+def register_checker(name, clazz):
+    CHECKER_CLASS[name] = clazz
+
+register_checker('pylint', PylintChecker)
 
 # vim: set fdm=marker foldlevel=1:

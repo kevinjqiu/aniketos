@@ -5,8 +5,6 @@ checker.
 import os
 import cPickle
 
-DefaultAcceptPolicy = lambda *a : True
-
 def StrictAcceptPolicy(result):
     """This is the strictest accept policy.
 

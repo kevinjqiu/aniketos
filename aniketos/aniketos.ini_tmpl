@@ -1,0 +1,4 @@
+[rule:pylint-on-master]
+refname=refs/heads/master
+checker=pylint
+

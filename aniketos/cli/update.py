@@ -3,8 +3,7 @@ import os
 import re
 from os.path import join
 from os.path import abspath
-from aniketos import git
-from aniketos.checker.pylint import PylintChecker
+from aniketos.checker import PylintChecker
 from aniketos.policy import StrictAcceptPolicy
 from aniketos.policy import PreviousRunBasedPolicy
 
@@ -28,7 +27,7 @@ class Rule(object):
 
 RULES = [
     Rule('refs/heads/master',
-        PylintChecker(git, STAGING_DIR,
+        PylintChecker(STAGING_DIR,
             PreviousRunBasedPolicy(RESULT_FILE))
     )
 ]
