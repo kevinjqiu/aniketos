@@ -1,4 +1,12 @@
-[rule:pylint-on-master]
+[policy:decremental]
+name=decremental
+result_filepath=/tmp/aniketos_result
+
+[checker:pylint]
+name=pylint
+staging_dir=/tmp/aniketos_staging
+policy=decremental
+
+[rule:pylint_on_master]
 refname=refs/heads/master
 checker=pylint
-
