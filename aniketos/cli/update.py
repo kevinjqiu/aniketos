@@ -3,7 +3,7 @@ import os
 import re
 from os.path import join
 from os.path import abspath
-from aniketos.checker import PylintChecker
+from aniketos.checker import get_checker_type
 from aniketos.policy import StrictAcceptPolicy
 from aniketos.policy import PreviousRunBasedPolicy
 
@@ -27,8 +27,9 @@ class Rule(object):
 
 RULES = [
     Rule('refs/heads/master',
-        PylintChecker(STAGING_DIR,
-            PreviousRunBasedPolicy(RESULT_FILE))
+        get_checker_type('pylint')(
+            STAGING_DIR, PreviousRunBasedPolicy(RESULT_FILE)
+        )
     )
 ]
 

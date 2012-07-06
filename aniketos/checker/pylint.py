@@ -9,6 +9,7 @@ from collections import defaultdict
 from pylint.reporters import BaseReporter
 from pylint.interfaces import IReporter
 from pylint.lint import Run
+from aniketos.checker import register_checker_type
 
 # Pylint checker {{{2
 # Reporter {{{ 3
@@ -97,10 +98,6 @@ class PylintChecker(object):
         return reporter.messages
 # }}}
 
-CHECKER_CLASS = {}
-def register_checker(name, clazz):
-    CHECKER_CLASS[name] = clazz
-
-register_checker('pylint', PylintChecker)
+register_checker_type('pylint', PylintChecker)
 
 # vim: set fdm=marker foldlevel=1:
