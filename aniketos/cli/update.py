@@ -1,6 +1,7 @@
 import sys
 import os
 import re
+import ConfigParser
 from os.path import join
 from os.path import abspath
 from aniketos.checker import get_checker_type
@@ -33,6 +34,23 @@ RULES = [
     )
 ]
 
+def read_config(fp):
+    cp = ConfigParser.ConfigParser()
+    cp.readfp(fp)
+    sections = cp.sections()
+
+    # sort out policies, checkers and rules
+    policy_sections = filter(lambda x:x.startswith('policy'), sections)
+    checker_sections  = filter(lambda x:x.startswith('checker'), sections)
+    rule_sections  = filter(lambda x:x.startswith('rule'), sections)
+
+    policies = {}
+    for section in policy_sections:
+        section = cp.get_section(section)
+    import pdb; pdb.set_trace()
+
+    return []
+
 def main():
     """Git update hook.
 
@@ -42,8 +60,11 @@ def main():
     """
     refname, oldrev, newrev = sys.argv[1:]
 
+    with open(join(REPO_ROOT_DIR, 'aniketos.ini')) as fp:
+        rules = read_config(fp)
+
     accepted = True
-    for rule in RULES:
+    for rule in rules:
         accepted = accepted and rule(refname, oldrev, newrev)
         # We still run all the checkers,
         # so the user will know which checks failed
