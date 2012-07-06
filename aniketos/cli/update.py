@@ -4,8 +4,7 @@ import re
 from os.path import join
 from os.path import abspath
 from aniketos.checker import get_checker_type
-from aniketos.policy import StrictAcceptPolicy
-from aniketos.policy import PreviousRunBasedPolicy
+from aniketos.policy import get_policy_type
 
 STAGING_DIR = '/tmp/staging'
 RESULT_FILE = '/tmp/result.pickle'
@@ -28,7 +27,8 @@ class Rule(object):
 RULES = [
     Rule('refs/heads/master',
         get_checker_type('pylint')(
-            STAGING_DIR, PreviousRunBasedPolicy(RESULT_FILE)
+            STAGING_DIR,
+            get_policy_type('decremental')(RESULT_FILE)
         )
     )
 ]

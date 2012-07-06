@@ -5,14 +5,19 @@ checker.
 import os
 import cPickle
 
-def StrictAcceptPolicy(result):
+POLICIES = {}
+
+# StrictPolicy {{{ 2
+def Strict():
     """This is the strictest accept policy.
 
     If there are any violations at all in :param result:, the method returns
     `False`, which means 'reject'
     """
-    return len(result) == 0
+    return lambda result : len(result) == 0
+# }}}
 
+# PreviousRunBasedPolicy {{{ 2
 def _sum_violations(msgid_occurence_map):
     return reduce(
         lambda aggregate, (msgid, occurences) : \
@@ -20,7 +25,7 @@ def _sum_violations(msgid_occurence_map):
         msgid_occurence_map.iteritems(),
         0)
 
-class PreviousRunBasedPolicy(object):
+class Decremental(object):
     """This policy is based on previous results.
 
     If there's no previous result file,
@@ -81,3 +86,12 @@ class PreviousRunBasedPolicy(object):
                 previous_result.update(result)
                 self._save_result(previous_result)
                 return True
+# }}}
+
+POLICIES['strict'] = Strict
+POLICIES['decremental'] = Decremental
+
+def get_policy_type(name):
+    return POLICIES[name]
+
+# vim: set fdm=marker foldlevel=1:

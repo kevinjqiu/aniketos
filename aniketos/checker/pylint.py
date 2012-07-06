@@ -1,15 +1,14 @@
 from __future__ import absolute_import
 
-import git
 import shutil
 import sys
 import os
 import json
+from aniketos import git
 from collections import defaultdict
 from pylint.reporters import BaseReporter
 from pylint.interfaces import IReporter
 from pylint.lint import Run
-from aniketos.checker import register_checker_type
 
 # Pylint checker {{{2
 # Reporter {{{ 3
@@ -98,6 +97,5 @@ class PylintChecker(object):
         return reporter.messages
 # }}}
 
-register_checker_type('pylint', PylintChecker)
 
 # vim: set fdm=marker foldlevel=1:

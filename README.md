@@ -66,3 +66,8 @@ Git repo has the following layout:
         `-- tags
 
 The nodes with asterisks are the ones specific to aniketos.
+
+TODO
+----
+* concurrent commits
+
