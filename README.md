@@ -41,6 +41,28 @@ You need write permission to `repository-location`. This will install aniketos t
 Configure
 ---------
 
-TODO
+Deployment
+----------
 
+Git repo has the following layout:
 
+    sample.git
+    |-- HEAD
+    |-- config
+    |-- aniketos_config*
+    |-- description
+    |-- hooks
+    |   |-- ...
+    |   |-- update -> /path/to/aniketos/bin/update**
+    |   `-- ...
+    |-- info
+    |   `-- exclude
+    |-- objects
+    |   |-- ...
+    |   `-- ...
+    `-- refs
+        |-- heads
+        |   `-- master
+        `-- tags
+
+The nodes with asterisks are the ones specific to aniketos.

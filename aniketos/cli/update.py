@@ -1,4 +1,6 @@
 import sys
+import os
+import re
 from os.path import join
 from os.path import abspath
 from aniketos import git
@@ -9,10 +11,27 @@ from aniketos.policy import PreviousRunBasedPolicy
 STAGING_DIR = '/tmp/staging'
 RESULT_FILE = '/tmp/result.pickle'
 
-CHECKERS = {
-    'refs/heads/master' : [PylintChecker(git, STAGING_DIR,
-        PreviousRunBasedPolicy(RESULT_FILE))]
-}
+# Server hook is always invoked from the repo's root directory
+REPO_ROOT_DIR = os.getcwd()
+
+class Rule(object):
+
+    def __init__(self, refmatcher, checker):
+        self._refmatcher = refmatcher
+        self._checker = checker
+
+    def __call__(self, refname, oldrev, newrev):
+        if re.search(self._refmatcher, refname):
+            return self._checker(refname, oldrev, newrev)
+        else:
+            return True
+
+RULES = [
+    Rule('refs/heads/master',
+        PylintChecker(git, STAGING_DIR,
+            PreviousRunBasedPolicy(RESULT_FILE))
+    )
+]
 
 def main():
     """Git update hook.
@@ -23,19 +42,12 @@ def main():
     """
     refname, oldrev, newrev = sys.argv[1:]
 
-    if refname in CHECKERS:
-        checkers = CHECKERS[refname]
-        accepted = True
-        for checker in checkers:
-            accepted = accepted and checker(refname, oldrev, newrev)
-
+    accepted = True
+    for rule in RULES:
+        accepted = accepted and rule(refname, oldrev, newrev)
         # We still run all the checkers,
         # so the user will know which checks failed
         if accepted:
             sys.exit(0)
         else:
             sys.exit(1)
-    else:
-        # No checker found for refname
-        # skipping...
-        sys.exit(0)

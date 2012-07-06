@@ -75,6 +75,7 @@ class PreviousRunBasedPolicy(object):
                     print " "*2, file_, \
                         "previous: %d" % num_previous_violations, \
                         "current: %d" % num_current_violations
+                    # TODO: make this a formatter
                     from violation import Violations
                     print str(Violations(violations))
                 return False
