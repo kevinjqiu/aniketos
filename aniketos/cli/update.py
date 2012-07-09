@@ -34,6 +34,17 @@ RULES = [
     )
 ]
 
+def build_policies(cp, sections):
+    for section in sections:
+        items = cp.items(section)
+        name = items['name']
+
+def build_checkers(cp, sections, policies):
+    pass
+
+def build_rules(cp, sections, rules):
+    pass
+
 def read_config(fp):
     cp = ConfigParser.ConfigParser()
     cp.readfp(fp)
@@ -44,10 +55,9 @@ def read_config(fp):
     checker_sections  = filter(lambda x:x.startswith('checker'), sections)
     rule_sections  = filter(lambda x:x.startswith('rule'), sections)
 
-    policies = {}
-    for section in policy_sections:
-        section = cp.get_section(section)
-    import pdb; pdb.set_trace()
+    policies = build_policies(cp, policy_sections)
+    checkers = build_checkers(cp, checker_sections, policies)
+    rules = build_rules(cp, rule_sections, rules)
 
     return []
 
