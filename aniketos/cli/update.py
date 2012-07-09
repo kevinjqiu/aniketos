@@ -15,12 +15,12 @@ REPO_ROOT_DIR = os.getcwd()
 
 class Rule(object):
 
-    def __init__(self, refmatcher, checker):
-        self._refmatcher = refmatcher
+    def __init__(self, refmatch, checker):
+        self._refmatch = refmatch
         self._checker = checker
 
     def __call__(self, refname, oldrev, newrev):
-        if re.search(self._refmatcher, refname):
+        if re.search(self._refmatch, refname):
             return self._checker(refname, oldrev, newrev)
         else:
             return True
@@ -35,15 +35,32 @@ RULES = [
 ]
 
 def build_policies(cp, sections):
+    retval = {}
     for section in sections:
-        items = cp.items(section)
-        name = items['name']
+        items = dict(cp.items(section))
+        _, name = section.split(':')
+        type_ = items.pop('type')
+        retval[name] = get_policy_type(type_)(**items)
+    return retval
 
 def build_checkers(cp, sections, policies):
-    pass
+    retval = {}
+    for section in sections:
+        items = dict(cp.items(section))
+        _, name = section.split(':')
+        type_ = items.pop('type')
+        items['policy'] = policies[items['policy']]
+        retval[name] = get_checker_type(type_)(**items)
+    return retval
 
-def build_rules(cp, sections, rules):
-    pass
+def build_rules(cp, sections, checkers):
+    retval = {}
+    for section in sections:
+        items = dict(cp.items(section))
+        _, name = section.split(':')
+        items['checker'] = checkers[items['checker']]
+        retval[name] = Rule(**items)
+    return retval
 
 def read_config(fp):
     cp = ConfigParser.ConfigParser()
@@ -57,9 +74,9 @@ def read_config(fp):
 
     policies = build_policies(cp, policy_sections)
     checkers = build_checkers(cp, checker_sections, policies)
-    rules = build_rules(cp, rule_sections, rules)
+    rules = build_rules(cp, rule_sections, checkers)
 
-    return []
+    return rules
 
 def main():
     """Git update hook.
@@ -74,7 +91,7 @@ def main():
         rules = read_config(fp)
 
     accepted = True
-    for rule in rules:
+    for rule in rules.values():
         accepted = accepted and rule(refname, oldrev, newrev)
         # We still run all the checkers,
         # so the user will know which checks failed

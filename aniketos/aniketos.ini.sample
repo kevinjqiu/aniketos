@@ -1,0 +1,13 @@
+[policy:mastercheckerpolicy]
+type=decremental
+result_filepath=/tmp/aniketos_result
+
+[checker:masterchecker]
+type=pylint
+staging_dir=/tmp/aniketos_staging
+policy=mastercheckerpolicy
+rcfile=
+
+[rule:refs/heads/master]
+refmatch=refs/heads/master
+checker=masterchecker

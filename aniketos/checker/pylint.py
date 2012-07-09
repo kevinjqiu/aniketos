@@ -38,10 +38,10 @@ class MessageCollector(BaseReporter):
 
 class PylintChecker(object):
 
-    def __init__(self, staging_dir, accept_policy, rcfile=None):
+    def __init__(self, staging_dir, policy, rcfile=None):
         self.staging_dir = staging_dir
         self.rcfile = rcfile
-        self.accept_policy = accept_policy
+        self.accept_policy = policy
 
     def _nuke_dir_if_necessary(self, dir_):
         if os.path.exists(dir_):
@@ -96,6 +96,5 @@ class PylintChecker(object):
 
         return reporter.messages
 # }}}
-
 
 # vim: set fdm=marker foldlevel=1:
