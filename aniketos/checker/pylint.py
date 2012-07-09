@@ -85,7 +85,7 @@ class PylintChecker(object):
         reporter = MessageCollector(self.staging_dir)
 
         if self.rcfile:
-            args = ['--rcfile %s' % self.rcfile]
+            args = ['--rcfile=%s' % self.rcfile]
         else:
             args = []
         args.extend(list(abs_paths))

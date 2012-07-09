@@ -7,9 +7,6 @@ from os.path import abspath
 from aniketos.checker import get_checker_type
 from aniketos.policy import get_policy_type
 
-STAGING_DIR = '/tmp/staging'
-RESULT_FILE = '/tmp/result.pickle'
-
 # Server hook is always invoked from the repo's root directory
 REPO_ROOT_DIR = os.getcwd()
 
@@ -24,15 +21,6 @@ class Rule(object):
             return self._checker(refname, oldrev, newrev)
         else:
             return True
-
-RULES = [
-    Rule('refs/heads/master',
-        get_checker_type('pylint')(
-            STAGING_DIR,
-            get_policy_type('decremental')(RESULT_FILE)
-        )
-    )
-]
 
 def build_policies(cp, sections):
     retval = {}
