@@ -49,7 +49,7 @@ Git repo has the following layout:
     sample.git
     |-- HEAD
     |-- config
-    |-- aniketos_config*
+    |-- aniketos.ini*
     |-- description
     |-- hooks
     |   |-- ...
