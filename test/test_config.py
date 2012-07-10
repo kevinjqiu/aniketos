@@ -1,6 +1,7 @@
 from cStringIO import StringIO
 from aniketos.cli.config_parser import AniketosConfigParser
 from aniketos.checker import PylintChecker
+from aniketos.checker import NoRamblingChecker
 from aniketos.policy import Decremental
 
 class TestConfigParser(object):
@@ -58,3 +59,17 @@ result_filepath=/tmp/bar/staging
         assert rules['foo'].get_checker('barchecker').staging_dir, '/tmp/bar'
         assert isinstance(rules['foo'].get_checker('barchecker').policy, Decremental)
 
+
+    def test_read_config___simple_rule_with_optional_policy(self):
+        fp = StringIO("""[rule:foo]
+refmatch=refs/heads/mybranch
+checker=foochecker
+[checker:foochecker]
+type=norambling
+max_title_width=3
+""")
+        rules = self.cp.readfp(fp)
+
+        assert len(rules) == 1
+
+        assert isinstance(rules['foo'].get_checker('foochecker'), NoRamblingChecker)

@@ -23,7 +23,8 @@ class AniketosConfigParser(object):
             items = self._read_section(cp, section)
             _, name = section.split(':')
             type_ = items.pop('type')
-            items['policy'] = policies[items['policy']]
+            if 'policy' in items:
+                items['policy'] = policies[items['policy']]
             retval[name] = get_checker_type(type_)(**items)
         return retval
 

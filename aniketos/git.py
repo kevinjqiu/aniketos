@@ -26,3 +26,11 @@ def changed_files(oldrev, newrev):
 
 def get_blob(hash_):
     return commands.getoutput('git cat-file blob %s' % hash_)
+
+def revisions_in(oldrev, newrev):
+    output = commands.getoutput('git rev-list %s %s' % (oldrev, newrev))
+    return output.splitlines()
+
+def get_commit_message(rev):
+    output = commands.getoutput("git cat-file commit %s | sed '1,/^$/d'" % rev)
+    return output.strip()
