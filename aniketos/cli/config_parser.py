@@ -32,7 +32,11 @@ class AniketosConfigParser(object):
         for section in sections:
             items = self._read_section(cp, section)
             _, name = section.split(':')
-            items['checker'] = checkers[items['checker']]
+            checker_names = map(str.strip, items.pop('checker').split(','))
+
+            items['checkers'] = dict(
+                [(checker_name, checkers[checker_name]) for checker_name in checker_names]
+            )
             retval[name] = Rule(**items)
         return retval
 

@@ -25,7 +25,7 @@ result_filepath=/tmp/staging
 """)
         rules = self.cp.readfp(fp)
         assert len(rules) == 1
-        assert isinstance(rules['foo'].get_checker('foo'), PylintChecker)
+        assert isinstance(rules['foo'].get_checker('foochecker'), PylintChecker)
 
     def test_read_config___simple_rule_with_multiple_checkers(self):
         fp = StringIO("""[rule:foo]
@@ -50,11 +50,11 @@ result_filepath=/tmp/bar/staging
 
         assert len(rules) == 1
 
-        assert isinstance(rules['foo'].get_checker('foo'), PylintChecker)
-        assert rules['foo'].get_checker('foo').staging_dir, '/tmp/foo'
-        assert isinstance(rules['foo'].get_checker('foo').policy, Decremental)
+        assert isinstance(rules['foo'].get_checker('foochecker'), PylintChecker)
+        assert rules['foo'].get_checker('foochecker').staging_dir, '/tmp/foo'
+        assert isinstance(rules['foo'].get_checker('foochecker').policy, Decremental)
 
-        assert isinstance(rules['foo'].get_checker('bar'), PylintChecker)
-        assert rules['foo'].get_checker('bar').staging_dir, '/tmp/bar'
-        assert isinstance(rules['foo'].get_checker('bar').policy, Decremental)
+        assert isinstance(rules['foo'].get_checker('barchecker'), PylintChecker)
+        assert rules['foo'].get_checker('barchecker').staging_dir, '/tmp/bar'
+        assert isinstance(rules['foo'].get_checker('barchecker').policy, Decremental)
 

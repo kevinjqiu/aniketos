@@ -41,7 +41,7 @@ class PylintChecker(object):
     def __init__(self, staging_dir, policy, rcfile=None):
         self.staging_dir = staging_dir
         self.rcfile = rcfile
-        self.accept_policy = policy
+        self.policy = policy
 
     def _nuke_dir_if_necessary(self, dir_):
         if os.path.exists(dir_):
@@ -78,7 +78,7 @@ class PylintChecker(object):
             abs_paths.append(abs_path)
 
         result = self._run_pylint(abs_paths)
-        return self.accept_policy(result)
+        return self.policy(result)
 
     def _run_pylint(self, abs_paths):
         # TODO: a better idiom for 'throwing away output'?
