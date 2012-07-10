@@ -16,7 +16,8 @@ class NoRamblingChecker(object):
                     (rev, title)
                 )
         if violations:
-            print "The following commits have long titles. Please keep the commit message subject line less than %d chars" % self._max_title_width
+            print "The following commits have long titles."
+            print "Please keep the commit message subject line less than %d chars" % self._max_title_width
             for rev, title in violations:
                 print "  ", rev, title
 
