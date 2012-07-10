@@ -12,3 +12,5 @@ class Rule(object):
         else:
             return True
 
+    def get_checker(self, checker_name):
+        return self._checker

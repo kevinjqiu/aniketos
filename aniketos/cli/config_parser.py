@@ -5,10 +5,13 @@ from aniketos.policy import get_policy_type
 
 class AniketosConfigParser(object):
 
+    def _read_section(self, cp, section):
+        return dict(cp.items(section))
+
     def _build_policies(self, cp, sections):
         retval = {}
         for section in sections:
-            items = dict(cp.items(section))
+            items = self._read_section(cp, section)
             _, name = section.split(':')
             type_ = items.pop('type')
             retval[name] = get_policy_type(type_)(**items)
@@ -17,7 +20,7 @@ class AniketosConfigParser(object):
     def _build_checkers(self, cp, sections, policies):
         retval = {}
         for section in sections:
-            items = dict(cp.items(section))
+            items = self._read_section(cp, section)
             _, name = section.split(':')
             type_ = items.pop('type')
             items['policy'] = policies[items['policy']]
@@ -27,7 +30,7 @@ class AniketosConfigParser(object):
     def _build_rules(self, cp, sections, checkers):
         retval = {}
         for section in sections:
-            items = dict(cp.items(section))
+            items = self._read_section(cp, section)
             _, name = section.split(':')
             items['checker'] = checkers[items['checker']]
             retval[name] = Rule(**items)
