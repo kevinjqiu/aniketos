@@ -91,21 +91,16 @@ The nodes with asterisks are the ones specific to aniketos.
 
 If you have other update hooks already in the repo, say, girocco's default update hook, you will need to rename `update` to something else, e.g., `update-girocco`. Link update from aniketos to `$REPO/hooks/update-aniketos`, and create an entry point update hook:
 
-```bash update
-#! /bin/bash
+    #! /bin/bash
+    set -e
 
-set -e
-
-for hook in $(ls hooks/update-*); do
-    exec $hook $@
-done
-```
+    for hook in $(ls hooks/update-*); do
+        exec $hook $@
+    done
 
 Of course you need to make all of these scripts executable:
 
-```bash
-chmod +x update*
-```
+    chmod +x update*
 
 TODO
 ----
