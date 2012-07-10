@@ -62,6 +62,8 @@ checker=masterchecker
 Deployment
 ----------
 
+### Standard
+
 Git repo has the following layout:
 
     sample.git
@@ -84,6 +86,26 @@ Git repo has the following layout:
         `-- tags
 
 The nodes with asterisks are the ones specific to aniketos.
+
+### Working with other `update` hooks
+
+If you have other update hooks already in the repo, say, girocco's default update hook, you will need to rename `update` to something else, e.g., `update-girocco`. Link update from aniketos to `$REPO/hooks/update-aniketos`, and create an entry point update hook:
+
+```bash update
+#! /bin/bash
+
+set -e
+
+for hook in $(ls hooks/update-*); do
+    exec $hook $@
+done
+```
+
+Of course you need to make all of these scripts executable:
+
+```bash
+chmod +x update*
+```
 
 TODO
 ----
