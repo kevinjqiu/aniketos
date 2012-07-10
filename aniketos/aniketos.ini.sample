@@ -3,7 +3,7 @@ type=decremental
 result_filepath=/tmp/staging/master/result
 
 [checker:masterchecker]
-type=pylint
+type=python.pylint
 staging_dir=/tmp/staging/master/staging
 policy=mastercheckerpolicy
 rcfile=
