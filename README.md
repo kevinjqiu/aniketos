@@ -41,6 +41,24 @@ You need write permission to `repository-location`. This will install aniketos t
 Configure
 ---------
 
+A sample config:
+
+```ini
+[policy:mastercheckerpolicy]
+type=decremental
+result_filepath=/tmp/staging/master/result
+
+[checker:masterchecker]
+type=pylint
+staging_dir=/tmp/staging/master/staging
+policy=mastercheckerpolicy
+rcfile=
+
+[rule:refs/heads/master]
+refmatch=refs/heads/master
+checker=masterchecker
+```
+
 Deployment
 ----------
 
