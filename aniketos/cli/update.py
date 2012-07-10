@@ -75,6 +75,11 @@ def main():
     """
     refname, oldrev, newrev = sys.argv[1:]
 
+    if newrev == '0'*40 or oldrev == '0'*40:
+        # the branch is created or deleted,
+        # we don't need to check them in these cases.
+        sys.exit(0)
+
     with open(join(REPO_ROOT_DIR, 'aniketos.ini')) as fp:
         rules = read_config(fp)
 
