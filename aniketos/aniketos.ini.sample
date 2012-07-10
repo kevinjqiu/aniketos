@@ -1,10 +1,10 @@
 [policy:mastercheckerpolicy]
 type=decremental
-result_filepath=/tmp/aniketos_result
+result_filepath=/tmp/staging/master/result
 
 [checker:masterchecker]
 type=pylint
-staging_dir=/tmp/aniketos_staging
+staging_dir=/tmp/staging/master/staging
 policy=mastercheckerpolicy
 rcfile=
 
