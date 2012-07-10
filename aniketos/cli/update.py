@@ -9,6 +9,7 @@ from aniketos.policy import get_policy_type
 
 # Server hook is always invoked from the repo's root directory
 REPO_ROOT_DIR = os.getcwd()
+ZERO_REV = '0'*40
 
 class Rule(object):
 
@@ -75,7 +76,7 @@ def main():
     """
     refname, oldrev, newrev = sys.argv[1:]
 
-    if newrev == '0'*40 or oldrev == '0'*40:
+    if ZERO_REV in (newrev, oldrev):
         # the branch is created or deleted,
         # we don't need to check them in these cases.
         sys.exit(0)
