@@ -95,7 +95,7 @@ If you have other update hooks already in the repo, say, girocco's default updat
     set -e
 
     for hook in $(ls hooks/update-*); do
-        exec $hook $@
+        "$hook" "$@"
     done
 
 Of course you need to make all of these scripts executable:
