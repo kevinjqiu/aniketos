@@ -41,7 +41,7 @@ You need write permission to `repository-location`. This will install aniketos t
 Configure
 ---------
 
-A sample config:
+A [sample](https://github.com/kevinjqiu/aniketos/blob/master/aniketos/aniketos.ini.sample) config:
 
 ```ini
 [policy:mastercheckerpolicy]
