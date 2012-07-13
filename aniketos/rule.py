@@ -6,7 +6,7 @@ class Rule(object):
         self._refmatch = refmatch
         self._checkers = checkers
 
-    def __call__(self, refname, oldrev, newrev):
+    def __call__(self, ref, oldrev, newrev):
         if re.search(self._refmatch, refname):
             retval = True
             for checker in self._checkers.values():
