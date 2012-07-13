@@ -81,7 +81,6 @@ class PylintChecker(object):
         return self.policy(result)
 
     def _run_pylint(self, abs_paths):
-        # TODO: a better idiom for 'throwing away output'?
         reporter = MessageCollector(self.staging_dir)
 
         if self.rcfile:
@@ -90,11 +89,14 @@ class PylintChecker(object):
             args = []
         args.extend(list(abs_paths))
 
-        Run(args,
-            reporter=reporter,
-            exit=False)
+        if args:
+            Run(args,
+                reporter=reporter,
+                exit=False)
 
-        return reporter.messages
+            return reporter.messages
+        else:
+            return {}
 # }}}
 
 # vim: set fdm=marker foldlevel=1:
