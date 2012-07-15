@@ -1,7 +1,6 @@
 GitPython==0.3.2.RC1
 argparse==1.2.1
 async==0.6.1
-fresh-nanny==0.1dev
 gitdb==0.5.4
 logilab-astng==0.23.1
 logilab-common==0.57.1
