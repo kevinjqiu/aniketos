@@ -6,7 +6,7 @@ from aniketos.cli.config_parser import AniketosConfigParser
 
 # Server hook is always invoked from the repo's root directory
 REPO_ROOT_DIR = os.getcwd()
-ZERO_REV = '0'*40
+NULL_REV = '0'*40
 
 def get_reference(refname):
     refname = refname.split('/')[-1]
@@ -30,7 +30,7 @@ def main(argv=None, config=None):
 
     refname, oldrev, newrev = argv
 
-    if ZERO_REV in (newrev, oldrev):
+    if NULL_REV in (newrev, oldrev):
         # the branch is created or deleted,
         # we don't need to check them in these cases.
         return 0
