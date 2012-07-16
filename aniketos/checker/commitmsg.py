@@ -2,7 +2,7 @@ import aniketos.git as git
 
 class NoRamblingChecker(object):
 
-    def __init__(self, max_title_width):
+    def __init__(self, max_title_width=120):
         self._max_title_width = int(max_title_width)
 
     def __call__(self, refname, oldrev, newrev):

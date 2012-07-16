@@ -17,7 +17,7 @@ class TestConfigParser(object):
 refmatch=refs/heads/mybranch
 checker=foochecker
 [checker:foochecker]
-type=pylint
+type=python.pylint
 staging_dir=/tmp
 policy=foopolicy
 [policy:foopolicy]
@@ -33,14 +33,14 @@ result_filepath=/tmp/staging
 refmatch=refs/heads/mybranch
 checker=foochecker, barchecker
 [checker:foochecker]
-type=pylint
+type=python.pylint
 staging_dir=/tmp/foo
 policy=foopolicy
 [policy:foopolicy]
 type=decremental
 result_filepath=/tmp/foo/staging
 [checker:barchecker]
-type=pylint
+type=python.pylint
 staging_dir=/tmp/bar
 policy=barpolicy
 [policy:barpolicy]
@@ -65,7 +65,7 @@ result_filepath=/tmp/bar/staging
 refmatch=refs/heads/mybranch
 checker=foochecker
 [checker:foochecker]
-type=norambling
+type=message.norambling
 max_title_width=3
 """)
         rules = self.cp.readfp(fp)
