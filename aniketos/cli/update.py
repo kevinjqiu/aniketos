@@ -18,6 +18,17 @@ def get_reference(refname):
 
     return None
 
+def run(ref, commits, rules):
+    accepted = True
+    for rule in rules.values():
+        accepted = accepted and rule(ref, commits)
+        # We still run all the checkers,
+        # so the user will know which checks failed
+        if accepted:
+            return 0
+        else:
+            return 1
+
 def main(argv=None, config=None):
     """Git update hook.
 
@@ -43,19 +54,20 @@ def main(argv=None, config=None):
     config.close()
 
     ref = get_reference(refname)
+
     if ref is None:
         raise "'%s' not found." % (refname,)
 
-    # commits = ref.repo.iter_commits('%s..%s' % (oldrev, newrev))
-    # FIXME:
-    return 1
+    commits = ref.repo.iter_commits('%s..%s' % (oldrev, newrev))
 
-    accepted = True
-    for rule in rules.values():
-        accepted = accepted and rule(refname, oldrev, newrev)
-        # We still run all the checkers,
-        # so the user will know which checks failed
-        if accepted:
-            return 0
-        else:
-            return 1
+    return run(ref, commits, rules)
+
+    # accepted = True
+    # for rule in rules.values():
+    #     accepted = accepted and rule(refname, oldrev, newrev)
+    #     # We still run all the checkers,
+    #     # so the user will know which checks failed
+    #     if accepted:
+    #         return 0
+    #     else:
+    #         return 1

@@ -9,5 +9,5 @@ policy=mastercheckerpolicy
 rcfile=
 
 [rule:refs/heads/master]
-refmatch=refs/heads/master
+refmatch=master
 checker=masterchecker
