@@ -25,7 +25,7 @@ class TestUpdate(object):
     def setup(self):
         self.repo = self.load_repo()
 
-    def test_null_sha_should_be_ignored(self):
+    def test_null_sha_in_newrev_should_be_ignored(self):
         config = StringIO("""\
 [rule:refs/heads/master]
 refmatch=refs/heads/master
@@ -39,3 +39,19 @@ type=message.norambling""")
             config
             )
         assert 0 == status
+
+    def test_null_sha_in_oldrev_should_be_ignored(self):
+        config = StringIO("""\
+[rule:refs/heads/master]
+refmatch=refs/heads/master
+checker=master
+[checker:master]
+type=message.norambling""")
+
+        status = main(['refs/heads/master',
+            '0'*40,
+            '0beec7b5ea3f0fdbc95d0dd47f3c5bc275da8a33'],
+            config
+            )
+        assert 0 == status
+

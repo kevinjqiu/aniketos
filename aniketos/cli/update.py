@@ -46,7 +46,7 @@ def main(argv=None, config=None):
     if ref is None:
         raise "'%s' not found." % (refname,)
 
-    commits = ref.repo.iter_commits('%s..%s' % (oldrev, newrev))
+    # commits = ref.repo.iter_commits('%s..%s' % (oldrev, newrev))
     # FIXME:
     return 1
 
