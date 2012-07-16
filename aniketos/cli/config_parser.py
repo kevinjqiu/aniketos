@@ -1,9 +1,16 @@
 import ConfigParser
 from aniketos.rule import Rule
-from aniketos.checker import get_checker_type
-from aniketos.policy import get_policy_type
 
 class AniketosConfigParser(object):
+
+    def _import(self, full_object_path):
+        """Import the class specified in the path"""
+        parts = full_object_path.split('.')
+        module = ".".join(parts[:-1])
+        m = __import__(module)
+        for s in parts[1:]:
+            m = getattr(m, s)
+        return m
 
     def _read_section(self, cp, section):
         return dict(cp.items(section))
@@ -14,7 +21,7 @@ class AniketosConfigParser(object):
             items = self._read_section(cp, section)
             _, name = section.split(':')
             type_ = items.pop('type')
-            retval[name] = get_policy_type(type_)(**items)
+            retval[name] = self._import(type_)(**items)
         return retval
 
     def _build_checkers(self, cp, sections, policies):
@@ -25,7 +32,7 @@ class AniketosConfigParser(object):
             type_ = items.pop('type')
             if 'policy' in items:
                 items['policy'] = policies[items['policy']]
-            retval[name] = get_checker_type(type_)(**items)
+            retval[name] = self._import(type_)(**items)
         return retval
 
     def _build_rules(self, cp, sections, checkers):
@@ -58,3 +65,4 @@ class AniketosConfigParser(object):
         rules = self._build_rules(cp, rule_sections, checkers)
 
         return rules
+

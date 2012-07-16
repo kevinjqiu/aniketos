@@ -1,7 +1,7 @@
 from cStringIO import StringIO
 from aniketos.cli.config_parser import AniketosConfigParser
-from aniketos.checker import PylintChecker
-from aniketos.checker import NoRamblingChecker
+from aniketos.checker.python import PylintChecker
+from aniketos.checker.commitmsg import NoRamblingChecker
 from aniketos.policy import Decremental
 
 class TestConfigParser(object):
@@ -17,11 +17,11 @@ class TestConfigParser(object):
 refmatch=refs/heads/mybranch
 checker=foochecker
 [checker:foochecker]
-type=python.pylint
+type=aniketos.checker.python.PylintChecker
 staging_dir=/tmp
 policy=foopolicy
 [policy:foopolicy]
-type=decremental
+type=aniketos.policy.Decremental
 result_filepath=/tmp/staging
 """)
         rules = self.cp.readfp(fp)
@@ -33,18 +33,18 @@ result_filepath=/tmp/staging
 refmatch=refs/heads/mybranch
 checker=foochecker, barchecker
 [checker:foochecker]
-type=python.pylint
+type=aniketos.checker.python.PylintChecker
 staging_dir=/tmp/foo
 policy=foopolicy
 [policy:foopolicy]
-type=decremental
+type=aniketos.policy.Decremental
 result_filepath=/tmp/foo/staging
 [checker:barchecker]
-type=python.pylint
+type=aniketos.checker.python.PylintChecker
 staging_dir=/tmp/bar
 policy=barpolicy
 [policy:barpolicy]
-type=decremental
+type=aniketos.policy.Decremental
 result_filepath=/tmp/bar/staging
 """)
         rules = self.cp.readfp(fp)
@@ -65,7 +65,7 @@ result_filepath=/tmp/bar/staging
 refmatch=refs/heads/mybranch
 checker=foochecker
 [checker:foochecker]
-type=message.norambling
+type=aniketos.checker.commitmsg.NoRamblingChecker
 max_title_width=3
 """)
         rules = self.cp.readfp(fp)

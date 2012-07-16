@@ -32,7 +32,7 @@ class TestUpdate(object):
 refmatch=master
 checker=master
 [checker:master]
-type=message.norambling""")
+type=aniketos.checker.commitmsg.NoRamblingChecker""")
 
         status = main(['refs/heads/master',
             '0beec7b5ea3f0fdbc95d0dd47f3c5bc275da8a33',
@@ -47,7 +47,7 @@ type=message.norambling""")
 refmatch=master
 checker=master
 [checker:master]
-type=message.norambling""")
+type=aniketos.checker.commitmsg.NoRamblingChecker""")
 
         status = main(['refs/heads/master',
             '0'*40,
@@ -65,7 +65,7 @@ type=message.norambling""")
 refmatch=master
 checker=master
 [checker:master]
-type=message.norambling""")
+type=aniketos.checker.commitmsg.NoRamblingChecker""")
 
         status = main(['refs/heads/master',
             "0dea60ee1b95d26e376ceb175a52fd3e3a8ac2fc",
@@ -85,7 +85,7 @@ type=message.norambling""")
 refmatch=master
 checker=master
 [checker:master]
-type=message.norambling
+type=aniketos.checker.commitmsg.NoRamblingChecker
 max_title_width=20""")
 
         status = main(['refs/heads/master',

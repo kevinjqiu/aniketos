@@ -5,8 +5,6 @@ checker.
 import os
 import cPickle
 
-POLICIES = {}
-
 # StrictPolicy {{{ 2
 def Strict():
     """This is the strictest accept policy.
@@ -87,11 +85,5 @@ class Decremental(object):
                 self._save_result(previous_result)
                 return True
 # }}}
-
-POLICIES['strict'] = Strict
-POLICIES['decremental'] = Decremental
-
-def get_policy_type(name):
-    return POLICIES[name]
 
 # vim: set fdm=marker foldlevel=1:
