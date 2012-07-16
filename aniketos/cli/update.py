@@ -15,7 +15,6 @@ def get_reference(refname):
     for ref in repo.refs:
         if ref.name == refname:
             return ref
-
     return None
 
 def run(ref, commits, rules):
@@ -24,10 +23,7 @@ def run(ref, commits, rules):
         accepted = accepted and rule(ref, commits)
         # We still run all the checkers,
         # so the user will know which checks failed
-        if accepted:
-            return 0
-        else:
-            return 1
+    return 0 if accepted else 1
 
 def main(argv=None, config=None):
     """Git update hook.
@@ -59,15 +55,4 @@ def main(argv=None, config=None):
         raise "'%s' not found." % (refname,)
 
     commits = ref.repo.iter_commits('%s..%s' % (oldrev, newrev))
-
     return run(ref, commits, rules)
-
-    # accepted = True
-    # for rule in rules.values():
-    #     accepted = accepted and rule(refname, oldrev, newrev)
-    #     # We still run all the checkers,
-    #     # so the user will know which checks failed
-    #     if accepted:
-    #         return 0
-    #     else:
-    #         return 1
