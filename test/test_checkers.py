@@ -1,41 +1,50 @@
+import random
+from hashlib import sha1
 from mock import Mock
 from mock import patch
 from aniketos.checker.commitmsg import ReferenceChecker
 
+def commit(summary, **kwargs):
+    kwargs.update({'summary':summary})
+    retval = Mock(**kwargs)
+    if not hasattr(retval, 'hexsha'):
+        retval.hexsha = sha1(str(random.random())).hexdigest()
+    return retval
+
 def test_reference_checker___good_messages():
     checker = ReferenceChecker()
-    ref = Mock()
-    commits = [Mock(), Mock(), Mock()]
+    commits = [commit("Fix a bad problem. (Fixes #12345)"),
+        commit("Fix a new problem. Closes #54321"),
+        commit("Introduced a new problem. See #54321")]
 
-    commits[0].hexsha = "517b2f5b0932d6c002b7d655f9e8a4a6fbd69688"
-    commits[0].summary = "Fix a bad problem. (Fixes #12345)"
-
-    commits[1].hexsha = "8fc20aaf3c066b5fe1ff84b7eb2e7ef28175807d5"
-    commits[1].summary = "Fix a new problem. Closes #54321"
-
-    commits[2].hexsha = "517b2f5b0932d6c002b7d655f9e8a4a6fbd696888"
-    commits[2].summary = "Introduced a new problem. See #54321"
-
-    assert True == checker(ref, commits)
+    assert True == checker(Mock(), commits)
 
 @patch('sys.stdout')
 def test_reference_checker___some_bad_messages(mock_stdout):
     checker = ReferenceChecker()
 
-    ref = Mock()
-    commits = [Mock(), Mock(), Mock()]
+    commits = [commit("Fix a bad problem."),
+        commit("Fix a new problem. Closes #54321"),
+        commit("Introduced a new problem.")]
 
-    commits[0].hexsha = "517b2f5b0932d6c002b7d655f9e8a4a6fbd69688"
-    commits[0].summary = "Fix a bad problem"
-
-    commits[1].hexsha = "8fc20aaf3c066b5fe1ff84b7eb2e7ef28175807d5"
-    commits[1].summary = "Fix a new problem. Closes #54321"
-
-    commits[2].hexsha = "517b2f5b0932d6c002b7d655f9e8a4a6fbd696888"
-    commits[2].summary = "Introduced a new problem"
-
-    assert False == checker(ref, commits)
+    assert False == checker(Mock(), commits)
     mock_stdout.write.assert_called_with("""\
 The following commits don't have suitable summary lines:
-  517b2f5b0932d6c002b7d655f9e8a4a6fbd69688 Fix a bad problem
-  517b2f5b0932d6c002b7d655f9e8a4a6fbd696888 Introduced a new problem""")
+  %s %s
+  %s %s""" % (
+      commits[0].hexsha, commits[0].summary,
+      commits[2].hexsha, commits[2].summary))
+
+@patch('sys.stdout')
+def test_reference_checker___with_whitelist(mock_stdout):
+    checker = ReferenceChecker(whitelist=['migrations'])
+
+    commits = [commit("Migrations"),
+        commit("Fix a new problem. Closes #54321"),
+        commit("Introduced a new problem.")]
+
+    assert False == checker(Mock(), commits)
+    mock_stdout.write.assert_called_with("""\
+The following commits don't have suitable summary lines:
+  %s %s""" % (commits[2].hexsha, commits[2].summary))
+
