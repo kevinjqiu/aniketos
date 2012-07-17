@@ -36,6 +36,34 @@ class MessageCollector(BaseReporter):
         pass
 # }}}
 
+def get_affected_files_from_commits(commits):
+    """Get a list of changed files from the commit range."""
+    commit_list = list(commits)
+    if len(commit_list) == 0:
+        return []
+    else:
+        parent = commit_list[0].iter_parents().next()
+        diffs = commit_list[-1].diff(parent)
+
+        changed_files = set([])
+        deleted_files = set([])
+        added_files = set([])
+
+        for diff in diffs:
+            if diff.renamed:
+                added_files.add(diff.renamed_to)
+                deleted_files.add(diff.renamed_from)
+            elif diff.new_file:
+                added_files.add(diff.b_blob.path)
+            elif diff.deleted_file:
+                added_files.add(diff.a_blob.path)
+            else:
+                assert diff.a_blob.path == diff.b_blob.path
+                changed_files.add(diff.a_blob.path)
+        return dict(modified=list(changed_files),
+            deleted=list(deleted_files),
+            added=list(added_files))
+
 class PylintChecker(object):
 
     def __init__(self, staging_dir, policy, rcfile=None):
@@ -50,6 +78,10 @@ class PylintChecker(object):
     def _create_dir_if_necessary(self, dir_):
         if not os.path.exists(dir_):
             os.makedirs(dir_)
+
+    def __call__(self, ref, commits):
+        """Run Pylint on candidate files"""
+        pass
 
     def __call__(self, refname, oldrev, newrev):
         """Run Pylint on candidate files, return a list of violations.

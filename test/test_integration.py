@@ -1,30 +1,10 @@
 import mock
 from cStringIO import StringIO
-from os.path import abspath
-from os.path import join
-from os.path import dirname
-from git import Repo
-from shutil import copytree
-from shutil import rmtree
 from aniketos.cli.update import main
+from test import RepoTestBase
+from test import _
 
-TEST_ROOT = dirname(abspath(__file__))
-
-def _(relpath):
-    return join(TEST_ROOT, relpath)
-
-class TestUpdate(object):
-
-    def load_repo(self):
-        try:
-            rmtree(_('repo/sample.git'))
-        except:
-            pass
-        copytree(_('fixtures/sample.git'), _('repo/sample.git'))
-        return Repo(_('repo/sample.git'))
-
-    def setup(self):
-        self.repo = self.load_repo()
+class TestUpdate(RepoTestBase):
 
     def test_null_sha_in_newrev_should_be_ignored(self):
         config = StringIO("""\
