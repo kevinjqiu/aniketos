@@ -51,7 +51,6 @@ def get_affected_blobs_from_commits(commits):
 
         for diff in diffs:
             if diff.new_file:
-                # retval['added'].add(diff.b_blob.path)
                 retval['added'].add(diff.b_blob)
             elif diff.deleted_file:
                 retval['deleted'].add(diff.a_blob)
@@ -60,9 +59,6 @@ def get_affected_blobs_from_commits(commits):
                 retval['modified'].add(diff.a_blob)
 
         return retval
-
-# def checkout_blob(blobs, staging_dir):
-#     pass
 
 class PylintChecker(object):
 
@@ -79,40 +75,28 @@ class PylintChecker(object):
         if not os.path.exists(dir_):
             os.makedirs(dir_)
 
+    def _checkout_blobs(self, blobs):
+        for blob in blobs:
+            abs_path = os.path.join(self.staging_dir, blob.path)
+            self._create_dir_if_necessary(os.path.dirname(abs_path))
+            with open(abs_path, 'w') as f:
+                blob.stream_data(f)
+
     def __call__(self, ref, commits):
         files_affected = get_affected_blobs_from_commits(commits)
 
         self._nuke_dir_if_necessary(self.staging_dir)
         self._create_dir_if_necessary(self.staging_dir)
 
-    # def __call__(self, refname, oldrev, newrev):
-    #     """Run Pylint on candidate files, return a list of violations.
+        self._checkout_blobs(files_affected['added'])
+        self._checkout_blobs(files_affected['modified'])
 
-    #         :param refname: refname
-    #         :param oldrev: old revision hash
-    #         :param newrev: new revision hash
-    #         :return: list of violations from files touched between oldrev...newrev
-    #     """
-    #     files = git.changed_files(oldrev, newrev)
-    #     tree = git.ls_tree(newrev)
+        # run pylint on added and modified files
+        # TODO: remember to use abs path
 
-    #     changed_file_details = \
-    #         [(file_, _) for (file_, _) in tree.iteritems() if file_ in files]
-
-    #     self._nuke_dir_if_necessary(self.staging_dir)
-    #     self._create_dir_if_necessary(self.staging_dir)
-
-    #     # for each changed files, check out a local copy
-    #     abs_paths = []
-    #     for file_, details in changed_file_details:
-    #         abs_path = os.path.join(self.staging_dir, file_)
-    #         self._create_dir_if_necessary(os.path.dirname(abs_path))
-    #         with open(abs_path, 'w') as f:
-    #             f.write(git.get_blob(details['hash']))
-    #         abs_paths.append(abs_path)
-
-    #     result = self._run_pylint(abs_paths)
-    #     return self.policy(result)
+        # result = self._run_pylint(abs_paths)
+        # return self.policy(result)
+        return None
 
     def _run_pylint(self, abs_paths):
         reporter = MessageCollector(self.staging_dir)
