@@ -43,7 +43,7 @@ def get_affected_files_from_commits(commits):
         return []
     else:
         parent = commit_list[0].iter_parents().next()
-        diffs = commit_list[-1].diff(parent)
+        diffs = parent.diff(commit_list[-1])
 
         changed_files = set([])
         deleted_files = set([])
@@ -56,7 +56,7 @@ def get_affected_files_from_commits(commits):
             elif diff.new_file:
                 added_files.add(diff.b_blob.path)
             elif diff.deleted_file:
-                added_files.add(diff.a_blob.path)
+                deleted_files.add(diff.a_blob.path)
             else:
                 assert diff.a_blob.path == diff.b_blob.path
                 changed_files.add(diff.a_blob.path)

@@ -70,6 +70,11 @@ Please keep the commit message summary line less than 20 chars:
 
 class TestAffectedFiles(RepoTestBase):
 
+    def test___no_commit(self):
+        commits = self.repo.iter_commits("174c1870771b3b21869c44f3463dbd788bf024e2..174c1870771b3b21869c44f3463dbd788bf024e2")
+        affected_files = get_affected_files_from_commits(commits)
+        assert len(affected_files) == 0
+
     def test___files_modified(self):
         commits = self.repo.iter_commits("174c1870771b3b21869c44f3463dbd788bf024e2..4afe0b36b7772865115aba82d1bc8942e2c3e9d6")
         affected_files = get_affected_files_from_commits(commits)
@@ -77,3 +82,28 @@ class TestAffectedFiles(RepoTestBase):
         assert 0 == len(affected_files['added'])
         assert 0 == len(affected_files['deleted'])
         assert affected_files['modified'][0] == 'highlighty.py'
+
+    def test___file_added(self):
+        commits = self.repo.iter_commits("4afe0b36b7772865115aba82d1bc8942e2c3e9d6..e791bd14d48b0235fa8d3fd664190347eeccef0e")
+        affected_files = get_affected_files_from_commits(commits)
+        assert 1 == len(affected_files['added'])
+        assert 0 == len(affected_files['modified'])
+        assert 0 == len(affected_files['deleted'])
+        assert affected_files['added'][0] == 'new.py'
+
+    def test___file_moved(self):
+        commits = self.repo.iter_commits("e791bd14d48b0235fa8d3fd664190347eeccef0e..91f3a34167e775c166f00218ad126618ed655a74")
+        affected_files = get_affected_files_from_commits(commits)
+        assert 1 == len(affected_files['added'])
+        assert 0 == len(affected_files['modified'])
+        assert 1 == len(affected_files['deleted'])
+        assert affected_files['added'][0] == 'new_new.py'
+        assert affected_files['deleted'][0] == 'new.py'
+
+    def test___file_deleted(self):
+        commits = self.repo.iter_commits("91f3a34167e775c166f00218ad126618ed655a74..1af27ee144dc797ace07fa520211bc4cee75b6aa")
+        affected_files = get_affected_files_from_commits(commits)
+        assert 0 == len(affected_files['added'])
+        assert 0 == len(affected_files['modified'])
+        assert 1 == len(affected_files['deleted'])
+        assert affected_files['deleted'][0] == 'NEW_FILE_COMMIT2'
