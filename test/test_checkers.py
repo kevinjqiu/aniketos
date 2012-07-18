@@ -107,3 +107,12 @@ class TestAffectedFiles(RepoTestBase):
         assert 0 == len(affected_files['modified'])
         assert 1 == len(affected_files['deleted'])
         assert affected_files['deleted'][0] == 'NEW_FILE_COMMIT2'
+
+    def test___all_operations(self):
+        commits = self.repo.iter_commits("8fc20aaf3c066b5fe1ff84b7eb2e7ef28175807d..1af27ee144dc797ace07fa520211bc4cee75b6aa")
+        affected_files = get_affected_files_from_commits(commits)
+
+        assert 2 == len(affected_files['added'])
+        assert 0 == len(affected_files['modified'])
+        assert 1 == len(affected_files['deleted'])
+        assert affected_files['deleted'][0] == 'NEW_FILE_COMMIT2'
