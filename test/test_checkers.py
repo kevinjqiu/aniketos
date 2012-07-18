@@ -81,7 +81,7 @@ class TestAffectedFiles(RepoTestBase):
         assert 1 == len(affected_files['modified'])
         assert 0 == len(affected_files['added'])
         assert 0 == len(affected_files['deleted'])
-        assert affected_files['modified'][0] == 'highlighty.py'
+        assert affected_files['modified'] == set(['highlighty.py'])
 
     def test___file_added(self):
         commits = self.repo.iter_commits("4afe0b36b7772865115aba82d1bc8942e2c3e9d6..e791bd14d48b0235fa8d3fd664190347eeccef0e")
@@ -89,7 +89,7 @@ class TestAffectedFiles(RepoTestBase):
         assert 1 == len(affected_files['added'])
         assert 0 == len(affected_files['modified'])
         assert 0 == len(affected_files['deleted'])
-        assert affected_files['added'][0] == 'new.py'
+        assert affected_files['added'] == set(['new.py'])
 
     def test___file_moved(self):
         commits = self.repo.iter_commits("e791bd14d48b0235fa8d3fd664190347eeccef0e..91f3a34167e775c166f00218ad126618ed655a74")
@@ -97,8 +97,8 @@ class TestAffectedFiles(RepoTestBase):
         assert 1 == len(affected_files['added'])
         assert 0 == len(affected_files['modified'])
         assert 1 == len(affected_files['deleted'])
-        assert affected_files['added'][0] == 'new_new.py'
-        assert affected_files['deleted'][0] == 'new.py'
+        assert affected_files['added'] == set(['new_new.py'])
+        assert affected_files['deleted'] == set(['new.py'])
 
     def test___file_deleted(self):
         commits = self.repo.iter_commits("91f3a34167e775c166f00218ad126618ed655a74..1af27ee144dc797ace07fa520211bc4cee75b6aa")
@@ -106,7 +106,7 @@ class TestAffectedFiles(RepoTestBase):
         assert 0 == len(affected_files['added'])
         assert 0 == len(affected_files['modified'])
         assert 1 == len(affected_files['deleted'])
-        assert affected_files['deleted'][0] == 'NEW_FILE_COMMIT2'
+        assert affected_files['deleted'] == set(['NEW_FILE_COMMIT2'])
 
     def test___all_operations(self):
         commits = self.repo.iter_commits("8fc20aaf3c066b5fe1ff84b7eb2e7ef28175807d..1af27ee144dc797ace07fa520211bc4cee75b6aa")
@@ -115,4 +115,4 @@ class TestAffectedFiles(RepoTestBase):
         assert 2 == len(affected_files['added'])
         assert 0 == len(affected_files['modified'])
         assert 1 == len(affected_files['deleted'])
-        assert affected_files['deleted'][0] == 'NEW_FILE_COMMIT2'
+        assert affected_files['deleted'] == set(['NEW_FILE_COMMIT2'])

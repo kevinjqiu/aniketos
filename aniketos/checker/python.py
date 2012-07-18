@@ -45,22 +45,21 @@ def get_affected_files_from_commits(commits):
         parent = commit_list[-1].iter_parents().next()
         diffs = parent.diff(commit_list[0])
 
-        changed_files = set([])
-        deleted_files = set([])
-        added_files = set([])
+        retval = {'modified':set([]),
+            'deleted':set([]),
+            'added':set([])
+            }
 
         for diff in diffs:
             if diff.new_file:
-                added_files.add(diff.b_blob.path)
+                retval['added'].add(diff.b_blob.path)
             elif diff.deleted_file:
-                deleted_files.add(diff.a_blob.path)
+                retval['deleted'].add(diff.a_blob.path)
             else:
                 assert diff.a_blob.path == diff.b_blob.path
-                changed_files.add(diff.a_blob.path)
+                retval['modified'].add(diff.a_blob.path)
 
-        return dict(modified=list(changed_files),
-            deleted=list(deleted_files),
-            added=list(added_files))
+        return retval
 
 class PylintChecker(object):
 
