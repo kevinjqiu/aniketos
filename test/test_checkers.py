@@ -4,7 +4,7 @@ from mock import Mock
 from mock import patch
 from aniketos.checker.commitmsg import ReferenceChecker
 from aniketos.checker.commitmsg import NoRamblingChecker
-from aniketos.checker.python import get_affected_files_from_commits
+from aniketos.checker.python import get_affected_blobs_from_commits
 from test import RepoTestBase
 
 def mk_commit(summary, **kwargs):
@@ -72,47 +72,47 @@ class TestAffectedFiles(RepoTestBase):
 
     def test___no_commit(self):
         commits = self.repo.iter_commits("174c1870771b3b21869c44f3463dbd788bf024e2..174c1870771b3b21869c44f3463dbd788bf024e2")
-        affected_files = get_affected_files_from_commits(commits)
+        affected_files = get_affected_blobs_from_commits(commits)
         assert len(affected_files) == 0
 
     def test___files_modified(self):
         commits = self.repo.iter_commits("174c1870771b3b21869c44f3463dbd788bf024e2..4afe0b36b7772865115aba82d1bc8942e2c3e9d6")
-        affected_files = get_affected_files_from_commits(commits)
+        affected_files = get_affected_blobs_from_commits(commits)
         assert 1 == len(affected_files['modified'])
         assert 0 == len(affected_files['added'])
         assert 0 == len(affected_files['deleted'])
-        assert affected_files['modified'] == set(['highlighty.py'])
+        assert [x.path for x in affected_files['modified']] == ['highlighty.py']
 
     def test___file_added(self):
         commits = self.repo.iter_commits("4afe0b36b7772865115aba82d1bc8942e2c3e9d6..e791bd14d48b0235fa8d3fd664190347eeccef0e")
-        affected_files = get_affected_files_from_commits(commits)
+        affected_files = get_affected_blobs_from_commits(commits)
         assert 1 == len(affected_files['added'])
         assert 0 == len(affected_files['modified'])
         assert 0 == len(affected_files['deleted'])
-        assert affected_files['added'] == set(['new.py'])
+        assert [x.path for x in affected_files['added']] == ['new.py']
 
     def test___file_moved(self):
         commits = self.repo.iter_commits("e791bd14d48b0235fa8d3fd664190347eeccef0e..91f3a34167e775c166f00218ad126618ed655a74")
-        affected_files = get_affected_files_from_commits(commits)
+        affected_files = get_affected_blobs_from_commits(commits)
         assert 1 == len(affected_files['added'])
         assert 0 == len(affected_files['modified'])
         assert 1 == len(affected_files['deleted'])
-        assert affected_files['added'] == set(['new_new.py'])
-        assert affected_files['deleted'] == set(['new.py'])
+        assert [x.path for x in affected_files['added']] == ['new_new.py']
+        assert [x.path for x in affected_files['deleted']] == ['new.py']
 
     def test___file_deleted(self):
         commits = self.repo.iter_commits("91f3a34167e775c166f00218ad126618ed655a74..1af27ee144dc797ace07fa520211bc4cee75b6aa")
-        affected_files = get_affected_files_from_commits(commits)
+        affected_files = get_affected_blobs_from_commits(commits)
         assert 0 == len(affected_files['added'])
         assert 0 == len(affected_files['modified'])
         assert 1 == len(affected_files['deleted'])
-        assert affected_files['deleted'] == set(['NEW_FILE_COMMIT2'])
+        assert [x.path for x in affected_files['deleted']] == ['NEW_FILE_COMMIT2']
 
     def test___all_operations(self):
         commits = self.repo.iter_commits("8fc20aaf3c066b5fe1ff84b7eb2e7ef28175807d..1af27ee144dc797ace07fa520211bc4cee75b6aa")
-        affected_files = get_affected_files_from_commits(commits)
+        affected_files = get_affected_blobs_from_commits(commits)
 
         assert 2 == len(affected_files['added'])
         assert 0 == len(affected_files['modified'])
         assert 1 == len(affected_files['deleted'])
-        assert affected_files['deleted'] == set(['NEW_FILE_COMMIT2'])
+        assert [x.path for x in affected_files['deleted']] == ['NEW_FILE_COMMIT2']
