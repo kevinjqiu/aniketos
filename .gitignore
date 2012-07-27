@@ -28,3 +28,4 @@ pip-log.txt
 env/
 test/repo
 sample/
+.ropeproject/
