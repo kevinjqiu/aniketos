@@ -5,6 +5,7 @@ from mock import patch
 from aniketos.checker.commitmsg import ReferenceChecker
 from aniketos.checker.commitmsg import NoRamblingChecker
 from aniketos.checker.python import get_affected_blobs_from_commits
+from aniketos.checker.python import PylintChecker
 from test import RepoTestBase
 
 def mk_commit(summary, **kwargs):
@@ -68,6 +69,19 @@ Please keep the commit message summary line less than 20 chars:
   %s %s""" % (commits[2].hexsha, commits[2].summary,
       commits[3].hexsha, commits[3].summary))
 
+def MockPylintChecker(staging_dir, mock_policy):
+    checker = PylintChecker(staging_dir, mock_policy, None)
+    checker._nuke_dir_if_necessary = Mock()
+    checker._create_dir_if_necessary = Mock()
+    checker._checkout_blobs = Mock()
+    checker._run_pylint = Mock()
+    return checker
+
+def MockPolicy(retval):
+    policy = Mock()
+    policy.return_value = retval
+    return policy
+
 class TestAffectedFiles(RepoTestBase):
 
     def test___no_commit(self):
@@ -116,3 +130,25 @@ class TestAffectedFiles(RepoTestBase):
         assert 0 == len(affected_files['modified'])
         assert 1 == len(affected_files['deleted'])
         assert [x.path for x in affected_files['deleted']] == ['NEW_FILE_COMMIT2']
+
+    def test___right_files_are_collected(self):
+        checker = MockPylintChecker('/var/staging/', MockPolicy(True))
+        commits = self.repo.iter_commits("e791bd14d48b0235fa8d3fd664190347eeccef0e..91f3a34167e775c166f00218ad126618ed655a74")
+        assert True == checker(None, commits)
+        checker._run_pylint.assert_called_with(['/var/staging/new_new.py',])
+
+    def test___exclude_non_python_files_to_run_with_pylint(self):
+        checker = MockPylintChecker('/var/staging/', MockPolicy(True))
+        commits = self.repo.iter_commits("e791bd14d48b0235fa8d3fd664190347eeccef0e..b2a12e4736312228fe9ce724d76dd16628d3e9aa")
+        assert True == checker(None, commits)
+        checker._run_pylint.assert_called_with(['/var/staging/new_new.py',])
+
+        class Matcher(object):
+            def __eq__(self, other):
+                return set([blob.path for blob in other]) == \
+                    set(['new_new.py', 'README.md'])
+
+            def __ne__(self, other):
+                return not self.__eq__(other)
+
+        checker._checkout_blobs.assert_called_with(Matcher())

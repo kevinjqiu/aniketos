@@ -88,15 +88,16 @@ class PylintChecker(object):
         self._nuke_dir_if_necessary(self.staging_dir)
         self._create_dir_if_necessary(self.staging_dir)
 
-        self._checkout_blobs(files_affected['added'])
-        self._checkout_blobs(files_affected['modified'])
+        blobs_to_check = files_affected['added'] | files_affected['modified']
+        self._checkout_blobs(blobs_to_check)
 
-        # run pylint on added and modified files
-        # TODO: remember to use abs path
-
-        # result = self._run_pylint(abs_paths)
-        # return self.policy(result)
-        return None
+        files_to_check = [
+            os.path.join(self.staging_dir, blob.path)
+            for blob in blobs_to_check
+            if blob.path.endswith('.py')
+        ]
+        result = self._run_pylint(files_to_check)
+        return self.policy(result)
 
     def _run_pylint(self, abs_paths):
         reporter = MessageCollector(self.staging_dir)
